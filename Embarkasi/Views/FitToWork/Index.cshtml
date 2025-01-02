@@ -1,0 +1,191 @@
+﻿@model Embarkasi.Models.vw_m_ftw_karyawan
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">MASTER - @ViewBag.Title</h6>
+    </div>
+    <button id="authRedirect" class="btn btn-primary">Go to Change Changeshift Report</button>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" id="tableBS" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>NIK</th>
+                        <th>NAMA</th>
+                        <th>SHIFT</th>
+                        <th>SHIFT KEMARIN</th>
+                        <th>KATEGORI TIDUR</th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+@section styles {
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <style>
+        .checkbox-menu li label {
+            display: block;
+            padding: 3px 10px;
+            clear: both;
+            font-weight: normal;
+            line-height: 1.42857143;
+            color: #333;
+            white-space: nowrap;
+            margin: 0;
+            transition: background-color .4s ease;
+        }
+
+        .checkbox-menu li input {
+            margin: 0px 5px;
+            top: 2px;
+            position: relative;
+        }
+
+        .checkbox-menu li.active label {
+            background-color: #cbcbff;
+            font-weight: bold;
+        }
+
+        .checkbox-menu li label:hover,
+        .checkbox-menu li label:focus {
+            background-color: #f5f5f5;
+        }
+
+        .checkbox-menu li.active label:hover,
+        .checkbox-menu li.active label:focus {
+            background-color: #b8b8ff;
+        }
+    </style>
+}
+
+@section scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <script>
+        // Define the link and controller name
+        var baseUrl = '@Url.Action("Function", "Controller")';
+        var controllerName = "@ViewBag.Controller";
+
+        $(document).ready(function () {
+            getAll();
+
+            // Bind click event to the button for authentication and redirection
+            $('#authRedirect').on('click', async function () {
+                await authenticateAndRedirect();
+            });
+        });
+
+        function getAll() {
+            // Construct the URL for the AJAX request
+            var link = '@Url.Action("GetAll", "FitToWork")';
+
+            dataTable = $("#tableBS").DataTable({
+                "order": [[4, "desc"]],
+                "ajax": {
+                    "url": link,
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "nrp" },
+                    {
+                        "data": "name",
+                        "render": function (data) {
+                            return data ? data.toUpperCase() : data;
+                        }
+                    },
+                    { "data": "shift_hari_ini" },
+                    { "data": "shift_kemarin" },
+                    {
+                        "data": "kategori_tidur",
+                        "render": function (data) {
+                            var badgeClass = '';
+                            var textColorClass = '';
+
+                            switch (data) {
+                                case 'Kurang Tidur':
+                                    badgeClass = 'bg-danger';
+                                    textColorClass = 'text-white';
+                                    break;
+                                case 'Dalam Pengawasan':
+                                    badgeClass = 'bg-warning';
+                                    textColorClass = 'text-dark';
+                                    break;
+                                case 'Cukup Tidur':
+                                    badgeClass = 'bg-success';
+                                    textColorClass = 'text-white';
+                                    break;
+                                case '-':
+                                    badgeClass = 'bg-info';
+                                    textColorClass = 'text-white';
+                                    break;
+                                default:
+                                    badgeClass = '';
+                                    textColorClass = ''; // Default case
+                                    break;
+                            }
+
+                            return `<span class="badge ${badgeClass} ${textColorClass}">${data}</span>`;
+                        },
+                        "orderable": true
+                    },
+                    {
+                        "data": "id",
+                        "render": function (data) {
+                            return `
+                                            <button onclick="btnEdit(${data})" class="btn btn-success btn-circle btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        `;
+                        },
+                        "orderable": false,
+                        "width": "180px",
+                        "searchable": false
+                    }
+                ],
+                "language": {
+                    "emptyTable": "Tidak ada data"
+                },
+                "createdRow": function (row, data, index) {
+                    $(row).find('td').css({
+                        'font-size': '16px',
+                        'font-weight': 'bold'
+                    });
+                }
+            });
+        }
+
+
+        async function authenticateAndRedirect() {
+            const username = 'lulus.hermawan';
+            const password = 'Indexim.123';
+            const url = 'http://172.16.1.96/ReportS/powerbi/SHIFTCORNER/Reports/SETTING_CHANGE_SHIFT';
+
+            try {
+                await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username + ':' + password)
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = url;
+                    } else {
+                        alertify.error('Authentication failed or cannot access the resource');
+                    }
+                });
+            } catch (error) {
+                alertify.error('Error during authentication or redirection');
+            }
+        }
+    </script>
+}

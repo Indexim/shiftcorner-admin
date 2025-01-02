@@ -1,0 +1,271 @@
+﻿@{
+    ViewBag.Title = "Display3"; Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Shift Corner</title>
+    <!-- Custom fonts for this template-->
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/stylesheet1.css" rel="stylesheet" />
+    <style>
+        #time {
+            font-size: 2rem;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        #shift {
+            font-size: 50px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin-left: 50px;
+        }
+
+        #runningtext-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #000f;
+            color: white;
+            font-size: 50px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body id="page-top">
+    <div class="row" style="background-color: #000f; margin-top: 20px">
+        <div class="col-lg-1">
+            <center>
+                <img src="~/shift.png" style="width: 100px; height: 100px;" />
+            </center>
+        </div>
+        <div class="col-lg-7 text-left">
+            <p style="font-size: 40px; margin-bottom: 0px;">SHIFT CORNER AREA</p>
+            <p style="font-size: 20px; margin-bottom: 0px;">PT UNGGUL DINAMIKA UTAMA</p>
+        </div>
+        <div class="col-lg-2 text-right">
+            <p id="time" style="font-size: 40px; margin-bottom: 0px;"></p>
+            <p id="date" style="font-size: 20px; margin-bottom: 0px;"></p>
+        </div>
+        <div class="col-lg-2 text-right">
+            <center>
+                <p id="shift" style="font-size: 50px; margin: 2px;"></p>
+            </center>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-5" style="background-color: #000f; margin-top: 20px">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px;">PANEL EAST - SUPPORT</div>
+            </center>
+            <div class="row" id="loader" style="margin-left: 5px; margin-bottom: 15px"></div>
+            <div class="row" id="hauler" style="margin-left: 5px"></div>
+        </div>
+        <div class="col-lg-6" style="background-color: #000f; margin-top: 20px">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px;">T6 - TENGAH + PUNCAK SUPPORT</div>
+            </center>
+            <div class="row" id="loader1" style="margin-left: 5px; margin-bottom: 15px"></div>
+            <div class="row" id="hauler1" style="margin-left: 5px"></div>
+        </div>
+        <div class="col-lg-1" style="background-color: #000f; margin-top: 20px">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px;">NO SETTING</div>
+            </center>
+            <div class="row" id="noset" style="margin-left: 5px; margin-top: 32px"></div>
+        </div>
+    </div>
+
+    <div id="runningtext-container">
+        <p id="runningtext" style="font-size: 50px; margin: 2px;"></p>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include Perfect Scrollbar CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/css/perfect-scrollbar.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.Marquee/1.5.0/jquery.marquee.min.js"></script>
+
+    <script>
+        var link = '@Url.Action("Function", "Controller")';
+
+        $(document).ready(function () {
+            document.body.style.zoom = "50%";
+            getLoader('PANEL EAST');
+            getHauler('PANEL EAST');
+            getLoader1('T6');
+            getHauler1('T6');
+            getNoSet();
+            autoReloadPage();
+            updateDateTime();
+            runningText();
+
+            setInterval(function () {
+                updateDateTime();
+                updateShift();
+            }, 1000);
+        });
+
+        function getLoader(sektor) {
+            var sectorLink = link.replace("Controller", "Display3").replace("Function", "GetLoader");
+            $.ajax({
+                type: "GET",
+                url: sectorLink + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#loader").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getHauler(sektor) {
+            var haulerLink = link.replace("Controller", "Display3").replace("Function", "GetHauler");
+            $.ajax({
+                type: "GET",
+                url: haulerLink + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#hauler").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getLoader1(sektor) {
+            var loaderLink1 = link.replace("Controller", "Display3").replace("Function", "GetLoader");
+            $.ajax({
+                type: "GET",
+                url: loaderLink1 + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#loader1").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getHauler1(sektor) {
+            var haulerLink1 = link.replace("Controller", "Display3").replace("Function", "GetHauler");
+            $.ajax({
+                type: "GET",
+                url: haulerLink1 + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#hauler1").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getNoSet() {
+            var noSetLink = link.replace("Controller", "Display3").replace("Function", "GetNoSet");
+            $.ajax({
+                type: "GET",
+                url: noSetLink,
+                success: function (data) {
+                    if (data.status) {
+                        $("#noset").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const date = now.toLocaleDateString();
+            document.getElementById('time').textContent = time;
+            document.getElementById('date').textContent = date;
+        }
+
+        function autoReloadPage() {
+            setInterval(function () {
+                location.reload();
+            }, 80000);
+        }
+
+        function updateShift() {
+            const shift = getShift();
+            $('#shift').text(shift);
+        }
+
+        function getShift() {
+            const now = new Date();
+            const day = now.getDay();
+            const hour = now.getHours();
+            if (day !== 5) {
+                if (hour >= 3 && hour < 13) return 'SHIFT 1';
+                else if (hour >= 13 && hour < 21) return 'SHIFT 2';
+                else return 'SHIFT 3';
+            } else {
+                return hour >= 3 && hour < 15 ? 'SHIFT 1' : 'SHIFT 2';
+            }
+        }
+
+        function runningText() {
+            var textLink = link.replace("Controller", "RunningText").replace("Function", "GetAll");
+            $.ajax({
+                url: textLink,
+                type: 'GET',
+                success: function (response) {
+                    console.log("Response:", response); // Log response untuk debugging
+                    if (response.success) {
+                        // Menggunakan map untuk mendapatkan warna dan teks
+                        var texts = response.data.map(item => {
+                            return `<span style="color: ${item.color || 'white'};">${item.text}</span>`;
+                        }).join(' | '); // Menggabungkan teks dengan pemisah
+
+                        $('#runningtext').html(texts); // Set semua teks sekaligus
+
+                        // Inisialisasi marquee
+                        $('#runningtext').marquee({
+                            duration: 15000, // Durasi satu siklus marquee
+                            gap: 50,         // Jarak antar teks
+                            delayBeforeStart: 0,
+                            direction: 'left', // Arah gerakan
+                            duplicated: true,  // Duplikasi teks agar terus bergerak
+                        });
+                    } else {
+                        console.error("Pesan error:", response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Kesalahan saat mengambil data:', error);
+                }
+            });
+        }
+
+
+
+    </script>
+</body>
+</html>

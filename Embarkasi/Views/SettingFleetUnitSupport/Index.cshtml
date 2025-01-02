@@ -1,0 +1,341 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    #header {
+        position: sticky; /* Header tetap di posisi awal hingga di-scroll */
+        top: 0; /* Jarak dari atas saat sticky */
+        z-index: 1000; /* Tetap di atas elemen lain */
+        background-color: #1F2D48;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #content {
+        padding: 20px;
+        background-color: #f5f5f5;
+        height: 2000px; /* Konten yang panjang untuk menguji scrolling */
+    }
+</style>
+
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-lg-12 text-center" style="padding: 10px; background-color: #1F2D48; color: white; border: 3px solid groove; border-radius: 10px;">
+        <!-- Dropdown sektor di dalam col-lg-10 -->
+        <div class="row">
+            <div class="col-lg-1">
+                <select class="form-control form-control-md" id="cek_sektor" name="cek_sektor" onchange="ocSektor()" required>
+                    <option value="">- Pilih Tempudo -</option>
+                    <option value="PANEL EAST">PANEL EAST</option>
+                    <option value="T6">T6 - TENGAH + PUNCAK</option>
+                </select>
+            </div>
+            <div class="col-lg-10 text-center">
+                <!-- FLEET CONTROL -->
+                <b style="font-size: 20pt;">
+                    FLEET SETTING
+                </b>
+            </div>
+            <div class="col-lg-1">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <button class="btn btn-warning" onclick="synchronize()">Synchronize</button>
+                        <p id="syncMessage"></p> <!-- Area untuk menampilkan pesan -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="header" class="row" style="background-color: #1F2D48; padding: 15px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <div style="width: 200px; margin: 0 10px;">
+        <div class="card bg-danger text-white shadow-sm" style="border-radius: 10px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <b style="font-size: 12pt;">UNIT BREAKDOWN</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width: 200px; margin: 0 10px;">
+        <div class="card bg-warning text-white shadow-sm" style="border-radius: 10px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <b style="font-size: 12pt;">UNIT STANDBY</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width: 200px; margin: 0 10px;">
+        <div class="card bg-info text-white shadow-sm" style="border-radius: 10px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <b style="font-size: 12pt;">UNIT NO SETTING</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="body" class="row" style="background-color: #172242; padding: 15px; border-radius: 10px; margin-top: 5px; padding-bottom: 50px; ">
+    <div id="unit_breakdown" style="width: 200px; margin-left: 10px; margin-right: 10px;padding-bottom:100px;" ondragover="onDragOver(event);" ondrop="onDrop(event);">
+    </div>
+    <div id="unit_standby" style="width: 200px; margin-left: 10px; margin-right: 10px;padding-bottom:100px;" ondragover="onDragOver(event);" ondrop="onDrop(event);">
+    </div>
+    <div id="unit_no_setting" style="width: 200px; margin-left: 10px; margin-right: 10px;padding-bottom:100px;" ondragover="onDragOver(event);" ondrop="onDrop(event);">
+    </div>
+</div>
+
+
+
+
+@section scripts {
+    <script>
+        var link = '@Url.Action("Function", "Controller")';
+        var controller_name = "@ViewBag.Controller";
+        document.getElementById("cn_unit");
+
+        $(document).ready(function () {
+            document.body.style.zoom = "50%";
+            // cekPembatasanFleetSetting();
+        });
+
+        function synchronize() {
+            $.ajax({
+                url: "http://172.16.1.96:1000/replicate", // sesuaikan URL ini dengan endpoint Node.js Anda
+                type: "GET", // atau "POST" sesuai kebutuhan
+                success: function (response) {
+                    $("#syncMessage").text("Sinkronisasi berhasil!");
+                    $("#syncMessage").css("color", "green"); // mengatur warna teks untuk sukses
+                },
+                error: function (error) {
+                    $("#syncMessage").text("Sinkronisasi gagal: " + error.responseText);
+                    $("#syncMessage").css("color", "red"); // mengatur warna teks untuk kesalahan
+                }
+            });
+        }
+
+        function onDragStart(event) {
+            // if (apakahPembatasanFleetSetting()) {
+            //     alert("SETTING FLEET TIDAK BISA DI EDIT!");
+            //     event.preventDefault();
+            //     return;
+            // }
+            event.dataTransfer.setData('unit', event.target.id);
+            event.dataTransfer.setData('fleet_from', event.srcElement.parentElement.id);
+        }
+
+        function onDragOver(event) {
+            event.preventDefault();
+        }
+
+        function onDrop(event) {
+            // if (apakahPembatasanFleetSetting()) {
+            //     alert("SETTING FLEET TIDAK BISA DI EDIT!");
+            //     return;
+            // }
+            const unit = event.dataTransfer.getData('unit');
+            const fleet_from = event.dataTransfer.getData('fleet_from');
+            const draggableElement = document.getElementById(unit);
+            const dropzone = event.target;
+            dropzone.appendChild(draggableElement);
+            event.dataTransfer.clearData();
+
+            var sektor = $('#cek_sektor').val();
+            var fleet_to = event.target.id;
+
+            console.log('Unit:' + unit);
+            console.log('Dari fleet:' + fleet_from);
+            console.log('Pindah ke fleet:' + fleet_to);
+
+            insertData(sektor, unit, fleet_from, fleet_to);
+        }
+
+        function cekPembatasanFleetSetting() {
+            // if (apakahPembatasanFleetSetting()) {
+            //     alert("SETTING FLEET TIDAK BISA DI EDIT!");
+            // }
+        }
+
+        function apakahPembatasanFleetSetting() {
+            const sekarang = new Date();
+            const jam = sekarang.getHours();
+            return (jam >= 12 && jam < 12) || (jam >= 12 && jam < 12);
+        }
+
+        function btnEdit(id) {
+            $('#btnSave').hide();
+            $('#btnUpdate').show();
+            $('#formBS').trigger("reset");
+            $('.modalBS').modal('show');
+        }
+
+        $(document).ready(function () {
+            $('#header').prop('hidden', true);
+            $('#body').prop('hidden', true);
+        });
+
+        function ocSektor() {
+            $('.loader').remove();
+            $('.hauler').remove();
+            var sektor = $('#cek_sektor').val();
+
+            getLoader(sektor);
+            getHauler(sektor);
+            getHaulerNoSetting();
+            getHaulerBreakdown();
+            getHaulerStandBy();
+
+            $('#header').prop('hidden', false);
+            $('#body').prop('hidden', false);
+        }
+
+        function updateData(cn_unit) {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "Update");
+
+            $.ajax({
+                type: "POST",
+                url: link,
+                data: $('#formBS').serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        $('.modalBS').modal('hide');
+                        dataTable.ajax.reload();
+                        alertify.notify('Data berhasil diubah', 'success', 5);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function getLoader(sektor) {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "GetLoader");
+            $.ajax({
+                type: "GET",
+                url: link + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#header").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function getHauler(sektor) {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "GetHauler");
+            $.ajax({
+                type: "GET",
+                url: link + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#body").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function getHaulerBreakdown() {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "GetHaulerBreakdown");
+            $.ajax({
+                type: "GET",
+                url: link,
+                success: function (data) {
+                    if (data.status) {
+                        $("#unit_breakdown").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function getHaulerStandBy() {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "GetHaulerStandBy");
+            $.ajax({
+                type: "GET",
+                url: link,
+                success: function (data) {
+                    if (data.status) {
+                        $("#unit_standby").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function getHaulerNoSetting() {
+            link = link.replace("Controller", controller_name);
+            link = link.replace("Function", "GetHaulerNoSetting");
+            $.ajax({
+                type: "GET",
+                url: link,
+                success: function (data) {
+                    if (data.status) {
+                        $("#unit_no_setting").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+
+        function insertData(sektor, unit, fleet_from, fleet_to) {
+            link = link.replace("Controller", "ChangeFleetLog");
+            link = link.replace("Function", "Insert");
+
+            $.ajax({
+                type: "POST",
+                url: link,
+                data: {
+                    sektor: sektor,
+                    unit: unit,
+                    fleet_from: fleet_from,
+                    fleet_to: fleet_to
+                },
+                success: function (data) {
+                    if (data.status) {
+                        $('.modalBS').modal('hide');
+                        alertify.notify('Data berhasil disimpan', 'success', 5);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+            link = '@Url.Action("Function", "Controller")';
+        }
+    </script>
+}
+
+

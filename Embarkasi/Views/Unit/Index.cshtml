@@ -1,0 +1,337 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="margin-bottom: 20px;">
+    <button onclick="btnAdd()" class="btn btn-primary btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Add Data</span>
+    </button>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">MASTER - @ViewBag.Title</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" id="tableBS" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>CN UNIT</th>
+                        <th>EQ CLASS</th>
+                        <th>EGI</th>
+                        <th>PRODUCT</th>
+                        <th>IS ACTIVE</th>
+                        <th>IS STANDBY</th>
+                        <th>IS BREAKDOWN</th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Add/Update -->
+<div class="modal fade modalBS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">FORM @ViewBag.Title</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formBS" class="forms-sample">
+                    <input type="hidden" id="id" name="id" />
+                    <div class="form-group row">
+                        <label for="nrp" class="col-sm-3 col-form-label">CN UNIT</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="cn_unit" name="cn_unit" placeholder="Masukkan cn unit" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nrp" class="col-sm-3 col-form-label">EQ CLASS</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="eq_class" name="eq_class" placeholder="Masukkan eq class" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nrp" class="col-sm-3 col-form-label">EGI</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="egi" name="egi" placeholder="Masukkan egi" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nrp" class="col-sm-3 col-form-label">PRODUCT</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="product" name="product" placeholder="Masukkan product" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="kategori" class="col-sm-3 col-form-label">IS ACTIVE</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-md" id="is_active" name="is_active" required>
+                                <option value="">- Pilih is active -</option>
+                                <option value="true">TRUE</option>
+                                <option value="false">FALSE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="kategori" class="col-sm-3 col-form-label">IS STANDBY</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-md" id="is_standby" name="is_standby" required>
+                                <option value="">- Pilih is standby -</option>
+                                <option value="true">TRUE</option>
+                                <option value="false">FALSE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="kategori" class="col-sm-3 col-form-label">IS BREAKDOWN</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-md" id="is_breakdown" name="is_breakdown" required>
+                                <option value="">- Pilih is breakdown -</option>
+                                <option value="true">TRUE</option>
+                                <option value="false">FALSE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnSave" onclick="insertData()" class="btn btn-success mr-2">Save</button>
+                    <button type="button" id="btnUpdate" onclick="updateData()" class="btn btn-success mr-2">Update</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-light">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@* End Modal *@
+
+@section styles {
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+}
+
+@section scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <script>
+        var baseLink = '@Url.Action("Function", "Controller")';
+        var controllerName = "@ViewBag.Controller";
+        var dataTable;
+
+        $(document).ready(function () {
+            getCredentials();
+            getAll();
+        });
+
+        function btnAdd() {
+            $('#btnSave').show();
+            $('#btnUpdate').hide();
+            $('.modalBS').modal('show');
+            $('#formBS').trigger("reset");
+        }
+
+        function btnEdit(id) {
+            $('#btnSave').hide();
+            $('#btnUpdate').show();
+            $('#formBS').trigger("reset");
+            getData(id);
+            $('.modalBS').modal('show');
+        }
+
+        function getCredentials() {
+            //GetNRP
+            $('#created_by').val("@Html.Raw(ViewBag.created_by)");
+        }
+
+        function getAll() {
+            var linkGetAll = baseLink.replace("Controller", controllerName).replace("Function", "GetAll");
+
+            dataTable = $("#tableBS").DataTable({
+                "ajax": {
+                    "url": linkGetAll,
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "cn_unit" },
+                    { "data": "eq_class" },
+                    { "data": "egi" },
+                    { "data": "product" },
+                    {
+                        "data": "is_active", "render": function (data) {
+                            if (data === true) {
+                                return '<button class="btn btn-success btn-sm">Active</button>';
+                            } else {
+                                return '<button class="btn btn-danger btn-sm">Inactive</button>';
+                            }
+                        },
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "data": "is_standby", "render": function (data) {
+                            if (data === true) {
+                                return '<button class="btn btn-danger btn-sm">Standby</button>';
+
+                            } else {
+                                return '<button class="btn btn-success btn-sm">Ready</button>';
+                            }
+                        },
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "data": "is_breakdown", "render": function (data) {
+                            if (data === true) {
+                                return '<button class="btn btn-danger btn-sm">Breakdown</button>';
+
+                            } else {
+                                return '<button class="btn btn-success btn-sm">Operational</button>';
+                            }
+                        },
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "data": "id", "render": function (data) {
+                            var a = '<button onclick="btnEdit(\'' + data + '\')" class="btn btn-info btn-circle btn-sm">'
+                            a += '  <i class="fas fa-edit"></i>'
+                            a += '</button>'
+                            a += '<button onclick="deleteData(\'' + data + '\')" class="btn btn-danger btn-circle btn-sm" style="margin-left: 5px;">'
+                            a += '  <i class="fa fa-trash"></i>'
+                            a += '</button>'
+                            return a;
+                        },
+                        "orderable": false,
+                        "width": "180px",
+                        "searchable": false
+                    }
+                ],
+
+                "language": {
+                    "emptyTable": "Tidak ada data"
+                }
+            });
+        }
+
+        function getData(id) {
+            var linkGet = baseLink.replace("Controller", controllerName).replace("Function", "Get");
+            $.ajax({
+                type: "GET",
+                url: `${linkGet}/${id}`,
+                success: function (response) {
+                    if (response.success) {
+                        var data = response.data;
+
+                        $('#id').val(data.id);
+                        $('#cn_unit').val(data.cn_unit);
+                        $('#eq_class').val(data.eq_class);
+                        $('#egi').val(data.egi);
+                        $('#product').val(data.product);
+
+                        // Sesuaikan nilai boolean dengan "true" atau "false" sebagai string
+                        $('#is_active').val(data.is_active === true ? 'true' : data.is_active === false ? 'false' : '');
+                        $('#is_standby').val(data.is_standby === true ? 'true' : data.is_standby === false ? 'false' : '');
+                        $('#is_breakdown').val(data.is_breakdown === true ? 'true' : data.is_breakdown === false ? 'false' : '');
+                    } else {
+                        alert("Terjadi kesalahan: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Terjadi kesalahan: ", error);
+                    alert("Terjadi kesalahan saat mengambil data. Status: " + xhr.status + ", Pesan: " + error);
+                }
+            });
+        }
+
+
+
+        function insertData() {
+            var linkInsert = baseLink.replace("Controller", controllerName).replace("Function", "Insert");
+
+            $.ajax({
+                type: "POST",
+                url: linkInsert,
+                data: $('#formBS').serialize(),
+                success: function (data) {
+                    console.log("Response dari server:", data); // Tambahkan log untuk debug
+                    if (data.success) {  // Ubah dari data.status ke data.success
+                        $('.modalBS').modal('hide');
+                        dataTable.ajax.reload();
+                        alertify.notify('Data berhasil disimpan', 'success', 5);
+                    } else {
+                        alert(data.message);  // Pastikan data.message ada di respons
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Terjadi kesalahan: " + error);
+                }
+            });
+        }
+
+
+
+        function updateData() {
+            var id = $('#id').val();
+            $('#is_active').val() === "true" ? true : false;
+            $('#is_standby').val() === "true" ? true : false;
+            $('#is_breakdown').val() === "true" ? true : false;
+
+            var linkUpdate = baseLink.replace("Controller", controllerName).replace("Function", "Update");
+
+            $.ajax({
+                type: "POST",
+                url: `${linkUpdate}?pid=${id}`,
+                data: $('#formBS').serialize(),
+                success: function (data) {
+                    if (data.success) {
+                        $('.modalBS').modal('hide');
+                        alertify.notify('Data berhasil diubah', 'success', 5);
+                        dataTable.ajax.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Terjadi kesalahan: ' + error);
+                }
+            });
+        }
+
+
+        function deleteData(id) {
+            var link = baseLink.replace("Controller", controllerName).replace("Function", "Delete");
+
+            if (confirm('Are you sure?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: `${link}/${id}`,
+                    success: function (data) {
+                        if (data.success) {
+                            alertify.notify('Data berhasil dihapus', 'success', 5);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Terjadi kesalahan: ' + error);
+                    }
+                });
+            }
+        }
+
+
+    </script>
+}

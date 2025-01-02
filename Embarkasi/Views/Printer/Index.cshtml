@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Data Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 5px;
+/*             text-align: center; */
+        }
+
+        .header {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        #jam {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            background-color: lightgray;
+        }
+
+        .description {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="printPage()">Print</button>
+    <table>
+        <!-- Header Rows -->
+        <tr>
+            <td class="header" colspan="2">HM AWAL I:</td>
+            <td colspan="3"></td>
+            <td class="header" colspan="2">HM AKHIR I:</td>
+            <td colspan="4"></td>
+            <td class="header" colspan="2">NAMA OPERATOR:</td>
+            <td colspan="8"></td>
+        </tr>
+        <tr>
+            <td class="header" colspan="2">HM AWAL II:</td>
+            <td colspan="3"></td>
+            <td class="header" colspan="2">HM AKHIR II:</td>
+            <td colspan="4"></td>
+            <td class="header" colspan="2">SHIFT:</td>
+            <td colspan="8"></td>
+        </tr>
+
+        <!-- Data Row Titles -->
+        <tr>
+            <td class="header" rowspan="2">NO. EXCAVATOR</td>
+            <td class="header" rowspan="2">LOKASI DUMPING</td>
+            <td id="jam" colspan="11">DATA PRODUKSI</td>
+            <td class="header" rowspan="2">DESKRIPSI</td>
+            <td id="jam" colspan="11">DELAY PRODUKSI</td>
+        </tr>
+        <tr>
+            <td id="jam">7-8</td>
+            <td id="jam">8-9</td>
+            <td id="jam">9-10</td>
+            <td id="jam">10-11</td>
+            <td id="jam">11-12</td>
+            <td id="jam">12-1</td>
+            <td id="jam">1-2</td>
+            <td id="jam">2-3</td>
+            <td id="jam">3-4</td>
+            <td id="jam">4-5</td>
+            <td id="jam">5-6</td>
+            <td id="jam">7-8</td>
+            <td id="jam">8-9</td>
+            <td id="jam">9-10</td>
+            <td id="jam">10-11</td>
+            <td id="jam">11-12</td>
+            <td id="jam">12-1</td>
+            <td id="jam">1-2</td>
+            <td id="jam">2-3</td>
+            <td id="jam">3-4</td>
+            <td id="jam">4-5</td>
+            <td id="jam">5-6</td>
+        </tr>
+
+        <!-- Excavator Rows -->
+        <tr class="section-title">
+            <td>EX:</td>
+            <td>RD:</td>
+            <td rowspan="3">TOP SOIL</td>
+            <td colspan="11"></td>
+            <td class="description">SAFETY TALKMEETING</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">SERVICE/BBM</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">TRAVEL</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr class="section-title">
+            <td>EX:</td>
+            <td>RD:</td>
+            <td rowspan="3">OB</td>
+            <td colspan="11"></td>
+            <td class="description">TUNGGU BLASTING</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">TIDAK ADA PEKERJAAN</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">TUNGGU ALAT LAIN</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr class="section-title">
+            <td>EX:</td>
+            <td>RD:</td>
+            <td rowspan="3">COAL</td>
+            <td colspan="11"></td>
+            <td class="description">ISTIRAHAT</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">HUJAN/BERKABUT</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">ANTRI CRUSHER</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr class="section-title">
+            <td>EX:</td>
+            <td>RD:</td>
+            <td rowspan="2">OTHER</td>
+            <td colspan="11"></td>
+            <td class="description">RUSAK</td>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr>
+            <td>EX:</td>
+            <td>RD:</td>
+            <td colspan="11"></td>
+            <td class="description">JADWAL SERVICE</td>
+            <td colspan="10"></td>
+        </tr>
+    </table>
+
+
+    @section styles {
+        <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    }
+
+    @section scripts {
+        <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+        <script>
+            var baseLink = '@Url.Action("Function", "Controller")';
+            var controllerName = "@ViewBag.Controller";
+            var dataTable;
+
+            $(document).ready(function () {
+            });
+
+            function printPage() {
+                // Ambil konten HTML dari seluruh dokumen yang ingin dicetak
+                const content = document.documentElement.outerHTML;
+
+                // Kirim data ke server untuk dikonversi dan dicetak
+                fetch('http://localhost:3000/print', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: content })  // Kirim HTML ke server
+                })
+                    .then(response => response.text())
+                    .then(result => {
+                        alert(result);  // Berikan feedback jika berhasil
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        </script>
+    }
+
+</body>
+</html>
+

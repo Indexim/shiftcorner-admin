@@ -1,0 +1,377 @@
+﻿@{
+    ViewBag.Title = "Display1"; Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Shift Corner</title>
+    <!-- Custom fonts for this template-->
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/stylesheet1.css" rel="stylesheet" />
+    <style>
+        #time {
+            font-size: 2rem;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        #shift {
+            font-size: 50px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        .swal2-popup-custom {
+            border: 1px solid #3a3a56;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+        }
+        body {
+            background-color: black;
+            color: white;
+            background-image: url('img/wallpaper.jpg'); /* Path ke gambar */
+            background-size: cover; /* Membuat gambar memenuhi layar */
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Latar belakang tetap saat menggulir */
+            background-position: center center; /* Gambar berada di tengah */
+            position: relative; /* Posisi relatif untuk overlay */
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+            body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.6); /* Overlay hitam dengan transparansi */
+                z-index: -1; /* Overlay berada di belakang konten */
+            }
+        #runningtext-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #000f;
+            color: white;
+            font-size: 50px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .col-lg-5, .col-lg-6, .col-lg-1 {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+            .col-lg-5:hover, .col-lg-6:hover, .col-lg-1:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+
+        .font-weight-bold {
+            transition: background-color 0.3s ease-in-out;
+        }
+
+            .font-weight-bold:hover {
+                background-color: #2e4c97;
+            }
+    </style>
+</head>
+<body id="page-top">
+    <div class="row" style="background-color: #000f; margin-top: 20px">
+        <div class="col-lg-1">
+            <center>
+                <img src="~/img/logoshift.png" style="width: 130px; height: 130px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.5);
+        transition: box-shadow 0.3s ease-in-out;"
+                     onmouseover="this.style.boxShadow='0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.6)'"
+                     onmouseout="this.style.boxShadow='0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.5)'">
+            </center>
+
+        </div>
+        <div class="col-lg-7 text-left">
+            <p style="font-size: 60px; margin-bottom: 0px;"><strong>SHIFT CORNER AREA 1</strong></p>
+            <p style="font-size: 30px; margin-bottom: 0px;"><strong>PT UNGGUL DINAMIKA UTAMA</strong></p>
+
+        </div>
+        <div class="col-lg-2 text-right">
+            <p id="time" style="font-size: 60px; margin-bottom: 0px;"><strong></strong></p>
+            <p id="date" style="font-size: 30px; margin-bottom: 0px;"><strong></strong></p>
+
+        </div>
+        <div class="col-lg-2 text-right">
+            <center>
+                <p id="shift" style="font-size: 50px; margin: 2px;"></p>
+            </center>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-5" style="margin-top: 20px; border-radius: 10px;">
+            <center>
+                <div class="font-weight-bold text-white" style="background-color: #305eea; color: white; font-size: 30px; padding: 10px; border-radius: 5px;">PANEL EAST</div>
+            </center>
+            <div class="row" id="loader" style="margin-left: 5px; margin-bottom: 15px"></div>
+            <div class="row" id="hauler" style="margin-left: 5px"></div>
+        </div>
+
+        <div class="col-lg-6" style="margin-top: 20px; border-radius: 10px;">
+            <center>
+                <div class="font-weight-bold text-white" style="background-color: #305eea; color: white; font-size: 30px; padding: 10px; border-radius: 5px;">T6 - TENGAH + PUNCAK</div>
+            </center>
+            <div class="row" id="loader1" style="margin-left: 5px; margin-bottom: 15px"></div>
+            <div class="row" id="hauler1" style="margin-left: 5px"></div>
+        </div>
+
+        <div class="col-lg-1" style="margin-top: 20px; border-radius: 10px;">
+            <center>
+                <div class="font-weight-bold text-white" style="background-color: #305eea; color: white; font-size: 30px; padding: 10px; border-radius: 5px;">NO SETTING</div>
+            </center>
+            <div class="row" id="noset" style="margin-left: 5px; margin-top: 32px"></div>
+        </div>
+    </div>
+
+    <div id="runningtext-container">
+        <p id="runningtext" style="font-size: 50px; margin: 2px;"></p>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include Perfect Scrollbar CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/css/perfect-scrollbar.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.Marquee/1.5.0/jquery.marquee.min.js"></script>
+    <!-- Alertify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css">
+    <!-- Alertify Theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css">
+    <!-- Alertify JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var link = '@Url.Action("Function", "Controller")';
+        let previousDataIds = [];
+
+        $(document).ready(function () {
+            document.body.style.zoom = "70%";
+            getLoader('PANEL EAST');
+            getHauler('PANEL EAST');
+            getLoader1('T6');
+            getHauler1('T6');
+            getNoSet();
+            autoReloadPage();
+            updateDateTime();
+            runningText();
+
+            setInterval(function () {
+                updateDateTime();
+                updateShift();
+                checkForNewData();
+            }, 1000);
+        });
+
+function playNotificationSound() {
+    const audio = new Audio('/mp3/ting.mp3');
+    audio.play().catch(error => {
+        console.error('Pemutaran audio gagal:', error);
+    });
+}
+
+
+        function checkForNewData() {
+            var sectorLink = link.replace("Controller", "Display1").replace("Function", "GetAll");
+
+            fetch(sectorLink)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const currentData = result.data;
+                        const currentDataIds = currentData.map(item => item.id);
+                        const newIds = currentDataIds.filter(id => !previousDataIds.includes(id));
+                        if (newIds.length > 0) {
+                            newIds.forEach(id => {
+                                const newItem = currentData.find(item => item.id === id);
+                                if (newItem) {
+                                    Swal.fire({
+                                        title: 'Data Finger Diterima!',
+                                        html: `<strong>${newItem.nama_lengkap}</strong> - (${newItem.nik})`,
+                                        icon: 'success',
+                                        toast: true,
+                                        background: '#f1c40f',
+                                        color: '#2c3e50',
+                                        position: 'bottom-start',
+                                        timer: 4000,
+                                        showConfirmButton: false
+                                    });
+
+                                    playNotificationSound();
+                                }
+                            });
+                            previousDataIds = [...new Set([...previousDataIds, ...newIds])];
+                        }
+                    } else {
+                        console.error('Error:', result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+
+        function getLoader(sektor) {
+            var sectorLink = link.replace("Controller", "Display1").replace("Function", "GetLoader");
+            $.ajax({
+                type: "GET",
+                url: sectorLink + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#loader").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getHauler(sektor) {
+            var haulerLink = link.replace("Controller", "Display1").replace("Function", "GetHauler");
+            $.ajax({
+                type: "GET",
+                url: haulerLink + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#hauler").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getLoader1(sektor) {
+            var loaderLink1 = link.replace("Controller", "Display1").replace("Function", "GetLoader");
+            $.ajax({
+                type: "GET",
+                url: loaderLink1 + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#loader1").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getHauler1(sektor) {
+            var haulerLink1 = link.replace("Controller", "Display1").replace("Function", "GetHauler");
+            $.ajax({
+                type: "GET",
+                url: haulerLink1 + '?sektor=' + sektor,
+                success: function (data) {
+                    if (data.status) {
+                        $("#hauler1").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function getNoSet() {
+            var noSetLink = link.replace("Controller", "Display1").replace("Function", "GetNoSet");
+            $.ajax({
+                type: "GET",
+                url: noSetLink,
+                success: function (data) {
+                    if (data.status) {
+                        $("#noset").append(data.data);
+                    } else {
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const date = now.toLocaleDateString();
+            document.getElementById('time').textContent = time;
+            document.getElementById('date').textContent = date;
+        }
+
+        function autoReloadPage() {
+            setInterval(function () {
+                location.reload();
+            }, 80000);
+        }
+
+        function updateShift() {
+            const shift = getShift();
+            $('#shift').text(shift);
+        }
+
+        function getShift() {
+            const now = new Date();
+            const day = now.getDay();
+            const hour = now.getHours();
+            if (day !== 5) {
+                if (hour >= 3 && hour < 13) return 'SHIFT 1';
+                else if (hour >= 13 && hour < 21) return 'SHIFT 2';
+                else return 'SHIFT 3';
+            } else {
+                return hour >= 3 && hour < 15 ? 'SHIFT 1' : 'SHIFT 2';
+            }
+        }
+
+        function runningText() {
+            var textLink = link.replace("Controller", "RunningText").replace("Function", "GetAll");
+            $.ajax({
+                url: textLink,
+                type: 'GET',
+                success: function (response) {
+                    console.log("Response:", response); // Log response untuk debugging
+                    if (response.success) {
+                        // Menggunakan map untuk mendapatkan warna dan teks
+                        var texts = response.data.map(item => {
+                            return `<span style="color: ${item.color || 'white'};">${item.text}</span>`;
+                        }).join(' | '); // Menggabungkan teks dengan pemisah
+
+                        $('#runningtext').html(texts); // Set semua teks sekaligus
+
+                        // Inisialisasi marquee
+                        $('#runningtext').marquee({
+                            duration: 15000, // Durasi satu siklus marquee
+                            gap: 50,         // Jarak antar teks
+                            delayBeforeStart: 0,
+                            direction: 'left', // Arah gerakan
+                            duplicated: true,  // Duplikasi teks agar terus bergerak
+                        });
+                    } else {
+                        console.error("Pesan error:", response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Kesalahan saat mengambil data:', error);
+                }
+            });
+        }
+
+
+
+    </script>
+</body>
+</html>

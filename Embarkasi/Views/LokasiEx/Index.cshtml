@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">MASTER - @ViewBag.Title</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" id="tableBS" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>EX</th>
+                        <th>LOKASI</th>
+                        <th>TRANSPORTASI</th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add/Update -->
+<div class="modal fade modalBS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">FORM @ViewBag.Title</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formBS" class="forms-sample">
+                    <div class="form-group row">
+                        <label for="loader" class="col-sm-3 col-form-label">LOADER</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="loader" name="loader" placeholder="Masukkan loader" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="pid_transportasi" class="col-sm-3 col-form-label">TRANSPORTASI</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-md" id="transportasi" name="transportasi" required>
+                                <option value="">- Pilih Transportasi -</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="sektor" class="col-sm-3 col-form-label">TEMPUDO</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-md" id="sektor" name="sektor" required>
+                                <option value="">- Pilih Tempudo -</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <button type="button" id="btnUpdate" onclick="updateData()" class="btn btn-success mr-2">Update</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-light">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section styles {
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+}
+
+@section scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <script>
+        var link = '@Url.Action("Function", "Controller")';
+        var controller_name = "@ViewBag.Controller";
+        var dataTable;
+
+        $(document).ready(function () {
+            getAll()
+            getTransportasi()
+            loadTempudoDropdown();
+        })
+
+        function btnEdit(loader) {
+            $('#btnUpdate').show()
+            $('#formBS').trigger("reset")
+            getData(loader)
+            $('.modalBS').modal('show')
+        }
+
+
+        function getData(loader) {
+            var tempLink = link.replace("Controller", "LokasiEx").replace("Function", "Get/" + loader);
+            $.ajax({
+                type: "GET",
+                url: tempLink,
+                success: function (data) {
+                    if (data.success) { 
+                        $('#loader').val(data.data.loader);
+                        $('#sektor').val(data.data.sektor);
+                        $('#transportasi').val(data.data.transportasi);
+                    } else {
+                        alert(data.message || "Terjadi kesalahan."); 
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX error: ", error);
+                    console.log(xhr); // Memeriksa detail kesalahan
+                    alert("Terjadi kesalahan pada server: " + xhr.responseText); // Menampilkan pesan kesalahan
+                }
+            });
+        }
+
+
+        function getAll() {
+            var tempLink = link.replace("Controller", "LokasiEx").replace("Function", "GetAll");
+            dataTable = $("#tableBS").DataTable({
+                "ajax": {
+                    "url": tempLink,
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "loader" },
+                    {
+                        "data": function (data) {
+                            if (data.sektor === 'PANEL EAST') {
+                                return '<span class="badge badge-pill badge-success">PANEL EAST</span>';
+                            }
+                            return '<span class="badge badge-pill badge-info">T6 - TENGAH + PUNCAK</span>';
+                        }
+                    },
+                    { "data": "transportasi" },
+                    {
+                        "data": function (data) {
+                            return `
+                                <button onclick="btnEdit('${data.loader}')" class="btn btn-info btn-circle btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            `;
+                        },
+                        "orderable": false,
+                        "width": "180px",
+                        "searchable": false
+                    }
+                ],
+                "language": {
+                    "emptyTable": "Tidak ada data"
+                }
+            });
+        }
+
+        function updateData() {
+            var tempLink = link.replace("Controller", controller_name).replace("Function", "Update");
+
+            $.ajax({
+                type: "POST",
+                url: tempLink,
+                data: $('#formBS').serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        $('.modalBS').modal('hide');
+                        dataTable.ajax.reload();
+                        alertify.notify('Data berhasil diubah', 'success', 5);
+                    } else {
+                        alert(data.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX error: ", error);
+                    alert("Terjadi kesalahan pada server. Silakan coba lagi.");
+                }
+            });
+        }
+
+
+
+        function getTransportasi() {
+            var options = $("#transportasi");
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetAll", "Bus")',
+                success: function (data) {
+                    if (data.data && data.data.length > 0) {
+                        options.empty();
+                        options.append($("<option />").val("").text("- Pilih Transportasi -"));
+                        for (var a = 0; a < data.data.length; a++) {
+                            options.append($("<option />").val(data.data[a].unit).text(data.data[a].unit));
+                        }
+                    } else {
+                        alert('Tidak ada data transportasi yang tersedia');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Terjadi kesalahan saat mengambil data: ' + error);
+                }
+            });
+        }
+
+        function loadTempudoDropdown() {
+            let link = "/Tempudo/GetAllTempudo"; // Endpoint untuk mengambil data TEMPUDO
+
+            $.ajax({
+                url: link,
+                method: 'GET',
+                success: function (response) {
+                    console.log("Response dari server:", response); // Debugging: Cek respons server
+
+                    if (response.success && Array.isArray(response.data)) {
+                        // Kosongkan dropdown sebelum menambahkan opsi
+                        $('#sektor').empty().append('<option value="">- Pilih Tempudo -</option>');
+
+                        // Tambahkan opsi ke dropdown
+                        response.data.forEach(function (item) {
+                            if (item.value && item.label) {
+                                $('#sektor').append(`<option value="${item.value}">${item.label}</option>`);
+                            } else {
+                                console.error("Data item tidak valid:", item);
+                            }
+                        });
+                    } else {
+                        alert(response.message || 'Data tidak ditemukan.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error AJAX:", status, error);
+                    alert('Terjadi kesalahan saat mengambil data.');
+                }
+            });
+        }
+
+        // Panggil fungsi saat halaman selesai dimuat
+        $(document).ready(function () {
+            loadTempudoDropdown();
+        });
+
+
+    </script>
+}

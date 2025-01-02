@@ -1,0 +1,323 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">OPERATOR PENGGANTI REKOMENDASI</h6>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="tablePharse" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>NIK</th>
+                                <th>NAMA</th>
+                                <th>STATUS</th>
+                                <th>NRP</th>
+                                <th>PENGGANTI</th>
+                                <th>UNIT</th>
+                                <th>STATUS</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card text-white bg-warning mb-12">
+            <div class="card-body">
+                <h5 class="card-title text-dark">Keterangan</h5>
+                <p class="card-text" style="font-size: 0.75rem;">Operator pengganti rekomendasi adalah operator yang di rekomendasikan oleh system untuk mengendarai Unit yang kosong</p>
+                <p class="card-text" style="font-size: 0.75rem;">Operator Ready adalah operator yang sudah melakukan Absen via mesin absen tetapi tidak memiliki settingan Unit</p>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DATA UNIT PENGGANTI</h6>
+            </div>
+            <div class="card-body">
+                <form id="formBS">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group row">
+                                <label for="nrp" class="col-sm-3 col-form-label">TANGGAL</label>
+                                <div class="col-sm-9">
+
+                                    <input type="text" class="form-control" id="TGL" name="TGL" placeholder="tanggal" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="nrp" class="col-sm-3 col-form-label">SHIFT</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="SHIFT" name="SHIFT" placeholder="SHIFT" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="nama" class="col-sm-3 col-form-label">CN_UNIT</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="CN_UNIT" name="CN_UNIT" placeholder="CN_UNIT" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="nama" class="col-sm-3 col-form-label">NRP</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="NRP" name="NRP" placeholder="NRP" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="nama" class="col-sm-3 col-form-label">Nama</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="Nama" name="Nama" placeholder="NAMA" required readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group row">
+                                <label for="jabatan_id" class="col-sm-3 col-form-label">STATUS</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="STATUS" name="STATUS" placeholder="STATUS" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="dept_code" class="col-sm-3 col-form-label">EGI</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="EGI" name="EGI" placeholder="EGI" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row" data-toggle="modal" onclick="btnSearch()">
+                                <label for="jabatan_id" class="col-sm-3 col-form-label">PENGGANTI</label>
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="Penganti" name="Pengganti" placeholder="Pengganti" required>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <!-- Ubah dari 9 menjadi 1 -->
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="nrp" class="col-sm-12 col-form-label"></label>
+                                <div class="col-sm-12">
+                                    <button onclick="insertData()" type="button" id="btnSave" class="btn btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-save"></i>
+                                        </span>
+                                        <span class="text">SAVE</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">OPERATOR READY</h6>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="tableReady" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>NIK</th>
+                                <th>NAMA</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Add/Update -->
+<div class="modal fade modalBS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Data unit</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="tableBS" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>NIK</th>
+                                <th>NAMA</th>
+                                <th>UNIT</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Add/Update -->
+<div class="modal fade modalBSOPT" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Data unit</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>NIK</th>
+                                <th>NAMA</th>
+                                <th>STATUS</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles {
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+}
+
+@section scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <script>
+        var baseLink = '@Url.Action("Function", "Controller")';
+        var controllerName = "@ViewBag.Controller";
+        var dataTable;
+
+        $(document).ready(function () {
+            getAll();
+        });
+
+        function btnAdd() {
+            $('#btnSave').show();
+            $('#btnUpdate').hide();
+            $('#formBS').trigger("reset");
+            $('.modalBS').modal('show');
+        }
+
+        function btnEdit(id) {
+            $('#btnSave').hide();
+            $('#btnUpdate').show();
+            $('#formBS').trigger("reset");
+            getData(id);
+            $('.modalBS').modal('show');
+        }
+
+        function getAll() {
+            var link = baseLink.replace("Controller", controllerName).replace("Function", "GetAll");
+
+            dataTable = $("#tableReady").DataTable({
+                "order": [[1, "desc"]],
+                "ajax": {
+                    "url": link,
+                    "type": "GET",
+                    "datatype": "json",
+                    "dataSrc": "data"
+                },
+                "columns": [
+                    { "data": "nik" },
+                    { "data": "nama_lengkap" },
+                    {
+                        "data": "kategori_tidur",
+                        "render": function (data, type, row) {
+                            if (type === 'display') {
+                                let badgeClass = "";
+                                let displayText = data || "Belum Upload"; // Handle empty/null values
+
+                                switch (data) {
+                                    case "Cukup Tidur":
+                                        badgeClass = "badge-primary";
+                                        break;
+                                    case "Dalam Pengawasan":
+                                        badgeClass = "badge-warning";
+                                        break;
+                                    case "Kurang Tidur":
+                                        badgeClass = "badge-danger";
+                                        break;
+                                    default:
+                                        badgeClass = "badge-secondary"; // For "Belum Upload Jam Tidur"
+                                }
+
+                                return `<span class="badge ${badgeClass}">${displayText}</span>`;
+                            }
+                            return data; // Default for other types (e.g., export)
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "Tidak ada data"
+                }
+            });
+        }
+
+
+
+        function getData(id) {
+            var link = baseLink.replace("Controller", controllerName).replace("Function", "Get");
+
+            $.ajax({
+                type: "GET",
+                url: `${link}/${id}`,
+                success: function (response) {
+                    if (response.success) {
+                        var data = response.data;
+                        $('#nik').val(data.nik);
+                        $('#nama_lengkap').val(data.nama_lengkap);
+                        $('#kategori_tidur').val(data.kategori_tidur);
+                    } else {
+                        alert("Terjadi kesalahan: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Terjadi kesalahan: ", error);
+                    alert("Terjadi kesalahan saat mengambil data.");
+                }
+            });
+        }
+
+
+    </script>
+}

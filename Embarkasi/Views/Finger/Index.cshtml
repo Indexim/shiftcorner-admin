@@ -1,0 +1,158 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">MASTER - @ViewBag.Title</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" id="tableBS" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>NIK</th>
+                        <th>NAMA</th>
+                        <th>JAM IN</th>
+                        <th>JAM OUT</th>
+                        <th>IP IN</th>
+                        <th>IP OUT</th>
+                        <th>SHIFT SYSTEM</th>
+                        <th>SHIFT SETTINGAN</th>
+                        <th>UNIT</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section styles {
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+}
+
+
+@section scripts {
+    <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <!-- DataTables dan Buttons JS -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+
+    <script>
+        var baseLink = '@Url.Action("Function", "Controller")';
+        var controllerName = "@ViewBag.Controller";
+        var dataTable;
+
+        $(document).ready(function () {
+            getAll();
+        });
+
+        let processedIds = new Set();
+
+        function getAll() {
+            var linkGetAll = baseLink.replace("Controller", controllerName).replace("Function", "GetAll");
+
+            if (dataTable) {
+                dataTable.ajax.reload(null, false);
+            } else {
+                dataTable = $("#tableBS").DataTable({
+                    "ajax": {
+                        "url": linkGetAll,
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "nik" },
+                        { "data": "nama" },
+                        {
+                            "data": "jam_finger_in",
+                            "render": function (data) {
+                                return formatDateTime(data, "green");
+                            }
+                        },
+                        {
+                            "data": "jam_finger_out",
+                            "render": function (data) {
+                                return formatDateTime(data, "yellow");
+                            }
+                        },
+                        { "data": "fingerprint_ip_in" },
+                        { "data": "fingerprint_ip_out" },
+                        {
+                            "data": "shift_system",
+                            "render": function (data) {
+                                if (data === 'shift 1') {
+                                    return `<button class="badge badge-success" disabled>shift 1</button>`;
+                                } else {
+                                    return `<button class="badge badge-primary" disabled>shift 2</button>`;
+                                }
+                            },
+                            "orderable": false,
+                            "width": "100px",
+                            "searchable": false
+                        },
+                        {
+                            "data": "shift_settingan",
+                            "render": function (data) {
+                                if (data === 'shift 1') {
+                                    return `<button class="badge badge-success" disabled>shift 1</button>`;
+                                } else {
+                                    return `<button class="badge badge-primary" disabled>shift 2</button>`;
+                                }
+                            },
+                            "orderable": false,
+                            "width": "100px",
+                            "searchable": false
+                        },
+                        { "data": "unit" }
+                    ],
+                    "order": [[3, "desc"]],
+                    "language": {
+                        "emptyTable": "Tidak ada data"
+                    },
+                    "dom": 'Bfrtip', // Tambahkan DOM untuk Buttons
+                    "buttons": [
+                        {
+                            extend: 'excelHtml5',
+                            title: 'Data Export',
+                            text: 'Export Excel',
+                            className: 'btn btn-success btn-sm'
+                        }
+                    ]
+                });
+            }
+        }
+
+        // Fungsi untuk memformat tanggal dan menambahkan warna
+        function formatDateTime(dateTime, color) {
+            if (!dateTime) return '-';
+            // Parse tanggal dari format ISO
+            var date = new Date(dateTime);
+            var formattedDate = date.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).replace(',', ''); // Hapus koma untuk pemisah
+
+            // Tambahkan elemen dengan warna sesuai
+            return `<span style="background-color: ${color}; color: black; padding: 3px; border-radius: 3px;">${formattedDate}</span>`;
+        }
+
+
+    </script>
+}
+
+

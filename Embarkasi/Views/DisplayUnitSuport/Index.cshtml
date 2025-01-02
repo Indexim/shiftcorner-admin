@@ -1,0 +1,393 @@
+﻿@{ ViewBag.Title = "DisplaySupport"; Layout = null; 
+    
+    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Display Support</title>
+    <!-- Custom fonts for this template-->
+    <link href="~/Assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/Assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        #time {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 40px;
+            margin-bottom: 0px;
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
+        }
+
+        body {
+            background-color: black;
+            color: white; /* Untuk menyesuaikan warna teks agar kontras dengan latar belakang hitam */
+            font-family: "Arial", Courier, monospace;
+            margin-left:50px;
+        }
+    </style>
+</head>
+
+<body id="page-top" id="204454">
+    <div class="row">
+        <div class="col-lg-1">
+            <center>
+                <img src="~/Assets/departure.png" style="width: 100px; height: 100px; " />
+            </center>
+        </div>
+        <div class="col-lg-7 text-left">
+            <p style="font-size: 40px; margin-bottom: 0px; ">DEPARTURE FLEET AREA SUPPORT</p>
+            <p style="font-size: 20px; margin-bottom: 0px;">JANGAN LUPA BERDOA DAN UTAMAKAN KESELAMATAN</p>
+        </div>
+        <div class="col-lg-2 text-right">
+            <p id="time" style="font-size: 40px; margin-bottom: 0px; "></p>
+            <p id="date" style="font-size: 20px; margin-bottom: 0px;"></p>
+        </div>
+        <div class="col-lg-2 text-right">
+            <center>
+                <p id="shift" style="font-size: 50px; margin: 2px; "></p>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">DOZER</div>
+            </center>
+            <div class="row" id="dozer"></div>
+        </div>
+        <div class="col-lg-1" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">DRILING</div>
+            </center>
+            <div class="row" id="driling"></div>
+        </div>
+        <div class="col-lg-2" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">GRADER</div>
+            </center>
+            <div class="row" id="grader"></div>
+        </div>
+	<div class="col-lg-1" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">NOSET</div>
+            </center>
+            <div class="row" id="unit_no_setting"></div>
+        </div>
+        <div class="col-lg-3" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">LIGHT DUMP</div>
+            </center>
+            <div class="row" id="ld"></div>
+        </div>
+        <div class="col-lg-1" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">STB</div>
+            </center>
+            <div class="row" id="stb"></div>
+        </div>
+        <div class="col-lg-2" style="background-color: #000f;">
+            <center>
+                <div class="font-weight-bold text-black" style="background-color: #FFA500; color: #000000; font-size: 30px; ">WORKSHOP</div>
+            </center>
+            <div class="row" id="workshop"></div>
+        </div>
+
+    </div>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="~/Assets/vendor/jquery/jquery.min.js"></script>
+        <script src="~/Assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- Core plugin JavaScript-->
+        <script src="~/Assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+        <!-- Custom scripts for all pages-->
+        <script src="~/Assets/js/sb-admin-2.min.js"></script>
+        <!-- Page level plugins -->
+        <script src="~/Assets/vendor/chart.js/Chart.min.js"></script>
+        <!-- Include jQuery -->
+        <script src="~/Assets/jquery-3.6.4.min.js"></script>
+        <link href="~/Assets/perfect-scrollbar.min.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <!-- Include Perfect Scrollbar CSS and JS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/css/perfect-scrollbar.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.2/js/perfect-scrollbar.jquery.min.js"></script>
+        <script src="~/Assets2/jquery.marquee.js"></script>
+        <script src="~/Assets2/jquery.marquee.min.js"></script>
+        <script>
+      var link = '@Url.Action("Function", "Controller")'
+      var controller_name = "@ViewBag.Controller"
+      var a
+      $(document).ready(function() {
+
+          getDozer()
+          getDriling()
+          getGrader()
+          getLd()
+          getStb()
+          getWorkshop()
+          getUnitnoset()
+        autoReloadPage()
+          updateDateTime();
+          updateRunningText()
+        setInterval(function() {
+          updateDateTime();
+          updateShift();
+        }, 1000);
+      })
+
+        function getDozer() {
+
+                  link = link.replace("Controller", "DisplaySupport");
+            link = link.replace("Function", "GetDozer");
+            $.ajax({
+                type: "GET",
+                url: link ,
+                success: function (data) {
+                    console.log(data)
+                    if (data.status) {
+                        $("#dozer").append(data.data);
+                    } else {
+                        alert(data.data)
+                    }
+                }
+            })
+            link = '@Url.Action("Function", "Controller")'
+        }
+
+        function getDriling() {
+
+            link = link.replace("Controller", "DisplaySupport");
+      link = link.replace("Function", "GetDriling");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#driling").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+        }
+        function getGrader() {
+
+            link = link.replace("Controller", "DisplaySupport");
+      link = link.replace("Function", "GetGrader");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#grader").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+        }
+    function getLd() {
+
+            link = link.replace("Controller", "DisplaySupport");
+      link = link.replace("Function", "GetLd");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#ld").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+  }
+      function getStb() {
+
+            link = link.replace("Controller", "DisplaySupport");
+      link = link.replace("Function", "GetSTB");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#stb").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+        }
+
+              function getWorkshop() {
+
+            link = link.replace("Controller", "DisplaySupport");
+      link = link.replace("Function", "GetWorkshop");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#workshop").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+  }
+
+            function getUnitnoset() {
+
+            link = link.replace("Controller", "DisplaySupport");
+                link = link.replace("Function", "GetUnitnoset");
+      $.ajax({
+          type: "GET",
+          url: link ,
+          success: function (data) {
+              console.log(data)
+              if (data.status) {
+                  $("#unit_no_setting").append(data.data);
+              } else {
+                  alert(data.data)
+              }
+          }
+      })
+      link = '@Url.Action("Function", "Controller")'
+  }
+
+
+
+      //function updateDateTime() {
+      //  // Mendapatkan waktu dan tanggal sekarang
+      //  var now = new Date();
+      //  // Format waktu HH:MM:SS
+      //  var hours = now.getHours().toString().padStart(2, '0');
+      //  var minutes = now.getMinutes().toString().padStart(2, '0');
+      //  var seconds = now.getSeconds().toString().padStart(2, '0');
+      //  // Format tanggal DD/MM/YYYY
+      //  var day = now.getDate().toString().padStart(2, '0');
+      //  var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Bulan dimulai dari 0
+      //  var year = now.getFullYear();
+      //  // Menetapkan waktu dan tanggal ke elemen HTML
+      //  $('#time').text(hours + ':' + minutes + ':' + seconds);
+      //  $('#date').text(day + '-' + month + '-' + year);
+      //}
+
+            function updateDateTime() {
+                fetch('http://10.183.5.4:3000/datetime')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Menetapkan waktu dan tanggal ke elemen HTML
+                        document.getElementById('time').textContent = data.time;
+                        document.getElementById('date').textContent = data.date;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Mengambil waktu lokal jika gagal mengambil dari server
+                        const now = new Date();
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        const seconds = now.getSeconds().toString().padStart(2, '0');
+                        const day = now.getDate().toString().padStart(2, '0');
+                        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                        const year = now.getFullYear();
+
+                        const time = `${hours}:${minutes}:${seconds}`;
+                        const date = `${day}-${month}-${year}`;
+
+                        // Menetapkan waktu dan tanggal lokal ke elemen HTML
+                        document.getElementById('time').textContent = time;
+                        document.getElementById('date').textContent = date;
+                    });
+            }
+
+
+      function autoReloadPage() {
+        setInterval(function() {
+          location.reload();
+        }, 80000);
+      }
+
+      function updateShift() {
+        var shift = getShift();
+        $('#shift').text(shift);
+      }
+
+      function getShift() {
+          const now = new Date();
+          const currentDay = now.getDay(); // Mendapatkan hari saat ini (0 untuk Minggu, 1 untuk Senin, ..., 5 untuk Jumat, 6 untuk Sabtu)
+          const currentHour = now.getHours();
+          if (currentDay !== 5) { // Jika bukan hari Jumat
+              if (currentHour >= 3 && currentHour < 13) {
+                  return 'SHIFT 1';
+              } else if (currentHour >= 13 && currentHour < 21) {
+                  return 'SHIFT 2';
+              } else if (currentHour >= 21 && currentHour < 24) {
+                  return 'SHIFT 3';
+              }
+          } else { // Jika hari Jumat
+              if ((currentHour >= 3 && currentHour < 15)) {
+                  return 'SHIFT 1';
+              } else {
+                  return 'SHIFT 2';
+              }
+          }
+      }
+
+
+        function updateRunningText() {
+            $.ajax({
+                url: '/Display/GetRunning',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        var runningContainer = $('#running');
+
+                        // Clear existing content
+                        runningContainer.empty();
+
+                        // Populate running text
+                        for (var i = 0; i < data.data.length; i++) {
+                            var spanElement = $('<span>').text(data.data[i].text);
+                            runningContainer.append(spanElement);
+                        }
+
+                        // Panggil plugin jQuery Marquee
+                        runningContainer.marquee({
+                            duration: 10000,  // Durasi perputaran (ms)
+                            gap: 0,          // Jarak antar elemen (px) set menjadi 0
+                            duplicated: false // Duplikasi elemen untuk efek tak terputus
+                        });
+                    } else {
+                        console.error('Gagal mengambil data teks berjalan:', data.remarks);
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Kesalahan mengambil data teks berjalan:', errorThrown);
+                }
+            });
+        }
+        </script>
+</body>
+</html>
